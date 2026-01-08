@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { Home, Building2, UserPlus, Bus, Route, LogOut, CalendarClock, Ticket, Users } from 'lucide-react';
 import { supabase } from "lib/supabase";
 
-const Sidebar = () => {
+const Sidebar = ({ companyName }) => {
   const handleLogout = async () => {
     await supabase.auth.signOut();
   };
@@ -12,7 +12,7 @@ const Sidebar = () => {
     <div className="w-64 p-5 glass text-foreground flex flex-col h-screen">
       <div className="mb-10">
         <Link href="/">
-          <span className="text-2xl font-bold text-orange-500">Nawabus</span>
+          <span className="text-2xl font-bold text-orange-500">{companyName || 'Nawabus'}</span>
           <br />
           <span className="text-sm text-muted-foreground">Portal da Empresa</span>
         </Link>

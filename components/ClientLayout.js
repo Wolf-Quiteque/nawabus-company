@@ -1,13 +1,53 @@
 "use client";
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import { supabase } from "lib/supabase";
 import Sidebar from './Sidebar';
 
-export default function ClientLayout({ children }) {
+export default function ClientLayout({ children, companyName: initialCompanyName }) {
   const pathname = usePathname();
   const router = useRouter();
   const isLoginPage = pathname === '/login';
+  const [companyName, setCompanyName] = useState(initialCompanyName || 'Nawabus');
+
+  useEffect(() => {
+    const fetchCompanyName = async () => {
+      if (initialCompanyName && initialCompanyName !== 'Nawabus') {
+        // If we already have a company name from server-side, use it
+        setCompanyName(initialCompanyName);
+        return;
+      }
+
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (user) {
+          const { data: profile } = await supabase
+            .from('profiles')
+            .select('company_id')
+            .eq('id', user.id)
+            .single();
+
+          if (profile?.company_id) {
+            const { data: company } = await supabase
+              .from('companies')
+              .select('name')
+              .eq('id', profile.company_id)
+              .single();
+
+            if (company?.name) {
+              setCompanyName(company.name);
+            }
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching company name:', error);
+      }
+    };
+
+    if (!isLoginPage) {
+      fetchCompanyName();
+    }
+  }, [initialCompanyName, isLoginPage]);
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -60,7 +100,7 @@ export default function ClientLayout({ children }) {
 
   return (
     <div className="flex">
-      {!isLoginPage && <Sidebar />}
+      {!isLoginPage && <Sidebar companyName={companyName} />}
       <main className={isLoginPage ? "w-full" : "flex-1 p-10"}>
         {children}
       </main>
