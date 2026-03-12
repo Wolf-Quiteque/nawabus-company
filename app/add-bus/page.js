@@ -95,6 +95,28 @@ export default function BusPage() {
               </Dialog>
             </div>
           </CardHeader>
+            < Curet>
+             <Card> 
+                    <div className="grid gap-4 py-4">  
+                      <div className="flex items-center space-x-4">
+                        <Label htmlFor="search" className="sr-only">
+                          Procurar autocarros
+                        </Label>
+                        <Input
+                          id="search"
+                          placeholder="Procurar autocarros..."
+                          value={searchTerm}
+                          onChange={(e) => setSearchTerm(e.target.value)}
+                          className="max-w-sm"
+                        />
+                      </div>  
+                    </div>
+              
+              <dialog>
+                this is new ca
+              </dialog>
+             </Card>
+            </Curet>
           <CardContent>
             {loading ? (
               <div className="flex justify-center items-center p-8">

@@ -1,6 +1,6 @@
 "use client";
 import Link from 'next/link';
-import { Home, Building2, UserPlus, Bus, Route, LogOut, CalendarClock, Ticket, Users } from 'lucide-react';
+import { Home, Building2, UserPlus, Bus, Route, LogOut, CalendarClock, Ticket, Users, Settings } from 'lucide-react';
 import { supabase } from "lib/supabase";
 
 const Sidebar = ({ companyName }) => {
@@ -96,6 +96,17 @@ const Sidebar = ({ companyName }) => {
             <Link href="/add-trip" className="flex items-center p-2 text-base font-normal rounded-lg hover:bg-accent">
               <CalendarClock className="w-6 h-6 text-primary" />
               <span className="ml-3">Adicionar Viagem</span>
+            </Link>
+          </li>
+          {/* Settings Section */}
+          <li className="mb-2 mt-6">
+            <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Configurações</span>
+          </li>
+
+          <li className="mb-4">
+            <Link href="/settings" className="flex items-center p-2 text-base font-normal rounded-lg hover:bg-accent">
+              <Settings className="w-6 h-6 text-primary" />
+              <span className="ml-3">Empresa</span>
             </Link>
           </li>
         </ul>
