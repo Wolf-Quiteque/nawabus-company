@@ -7,7 +7,6 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Loader2, ImagePlus, Save } from 'lucide-react';
 
 export default function SettingsPage() {
@@ -26,17 +25,6 @@ export default function SettingsPage() {
   const [address, setAddress] = useState('');
   const [logoFile, setLogoFile] = useState(null);
   const [logoPreview, setLogoPreview] = useState(null);
-
-  // Fiscal / SAF-T-AO
-  const [fiscalName, setFiscalName] = useState('');
-  const [taxId, setTaxId] = useState('');
-  const [fiscalAddress, setFiscalAddress] = useState('');
-  const [fiscalCity, setFiscalCity] = useState('');
-  const [fiscalPostalCode, setFiscalPostalCode] = useState('');
-  const [ivaRate, setIvaRate] = useState(14);
-  const [ivaCode, setIvaCode] = useState('NOR');
-  const [currencyCode, setCurrencyCode] = useState('AOA');
-  const [fiscalYear, setFiscalYear] = useState(new Date().getFullYear());
 
   useEffect(() => {
     fetchCompany();
@@ -58,9 +46,7 @@ export default function SettingsPage() {
 
       const { data: companyData, error } = await supabase
         .from('companies')
-        .select(`id, name, license_number, contact_email, contact_phone, address, logo_url,
-                 fiscal_name, tax_id, fiscal_address, fiscal_city, fiscal_postal_code,
-                 iva_rate, iva_code, currency_code, fiscal_year`)
+        .select('id, name, license_number, contact_email, contact_phone, address, logo_url')
         .eq('id', profile.company_id)
         .single();
 
@@ -73,15 +59,6 @@ export default function SettingsPage() {
       setContactPhone(companyData.contact_phone || '');
       setAddress(companyData.address || '');
       setLogoPreview(companyData.logo_url || null);
-      setFiscalName(companyData.fiscal_name || '');
-      setTaxId(companyData.tax_id || '');
-      setFiscalAddress(companyData.fiscal_address || '');
-      setFiscalCity(companyData.fiscal_city || '');
-      setFiscalPostalCode(companyData.fiscal_postal_code || '');
-      setIvaRate(companyData.iva_rate ?? 14);
-      setIvaCode(companyData.iva_code || 'NOR');
-      setCurrencyCode(companyData.currency_code || 'AOA');
-      setFiscalYear(companyData.fiscal_year || new Date().getFullYear());
     } catch (err) {
       console.error('Error fetching company:', err);
       setFormError('Erro ao carregar dados da empresa.');
@@ -145,15 +122,6 @@ export default function SettingsPage() {
         contact_phone: contactPhone.trim() || null,
         address: address.trim() || null,
         logo_url: logoUrl,
-        fiscal_name: fiscalName.trim() || null,
-        tax_id: taxId.trim() || null,
-        fiscal_address: fiscalAddress.trim() || null,
-        fiscal_city: fiscalCity.trim() || null,
-        fiscal_postal_code: fiscalPostalCode.trim() || null,
-        iva_rate: Number(ivaRate) || 14,
-        iva_code: ivaCode || 'NOR',
-        currency_code: currencyCode || 'AOA',
-        fiscal_year: Number(fiscalYear) || new Date().getFullYear(),
       };
 
       const { error } = await supabase
@@ -277,112 +245,6 @@ export default function SettingsPage() {
                     onChange={(e) => setAddress(e.target.value)}
                     className="mt-1"
                   />
-                </div>
-
-                <div className="border-t pt-4 mt-4">
-                  <h3 className="font-semibold text-sm text-orange-600 mb-3">Fiscal / SAF-T-AO</h3>
-                  <div className="space-y-3">
-                    <div>
-                      <Label htmlFor="fiscalName">Nome fiscal (razão social)</Label>
-                      <Input
-                        id="fiscalName"
-                        type="text"
-                        value={fiscalName}
-                        onChange={(e) => setFiscalName(e.target.value)}
-                        className="mt-1"
-                      />
-                    </div>
-                    <div>
-                      <Label htmlFor="taxId">NIF</Label>
-                      <Input
-                        id="taxId"
-                        type="text"
-                        value={taxId}
-                        onChange={(e) => setTaxId(e.target.value)}
-                        className="mt-1"
-                      />
-                    </div>
-                    <div>
-                      <Label htmlFor="fiscalAddress">Endereço fiscal</Label>
-                      <Input
-                        id="fiscalAddress"
-                        type="text"
-                        value={fiscalAddress}
-                        onChange={(e) => setFiscalAddress(e.target.value)}
-                        className="mt-1"
-                      />
-                    </div>
-                    <div className="grid grid-cols-2 gap-3">
-                      <div>
-                        <Label htmlFor="fiscalCity">Cidade</Label>
-                        <Input
-                          id="fiscalCity"
-                          type="text"
-                          value={fiscalCity}
-                          onChange={(e) => setFiscalCity(e.target.value)}
-                          className="mt-1"
-                        />
-                      </div>
-                      <div>
-                        <Label htmlFor="fiscalPostalCode">Código postal</Label>
-                        <Input
-                          id="fiscalPostalCode"
-                          type="text"
-                          value={fiscalPostalCode}
-                          onChange={(e) => setFiscalPostalCode(e.target.value)}
-                          className="mt-1"
-                        />
-                      </div>
-                    </div>
-                    <div className="grid grid-cols-3 gap-3">
-                      <div>
-                        <Label htmlFor="ivaRate">Taxa IVA (%)</Label>
-                        <Input
-                          id="ivaRate"
-                          type="number"
-                          step="0.01"
-                          value={ivaRate}
-                          onChange={(e) => setIvaRate(e.target.value)}
-                          className="mt-1"
-                        />
-                      </div>
-                      <div>
-                        <Label htmlFor="ivaCode">Código IVA</Label>
-                        <Select value={ivaCode} onValueChange={setIvaCode}>
-                          <SelectTrigger className="mt-1">
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="NOR">NOR</SelectItem>
-                            <SelectItem value="RED">RED</SelectItem>
-                            <SelectItem value="INT">INT</SelectItem>
-                            <SelectItem value="ISE">ISE</SelectItem>
-                            <SelectItem value="OUT">OUT</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                      <div>
-                        <Label htmlFor="currencyCode">Moeda</Label>
-                        <Input
-                          id="currencyCode"
-                          type="text"
-                          value={currencyCode}
-                          onChange={(e) => setCurrencyCode(e.target.value.toUpperCase())}
-                          className="mt-1"
-                        />
-                      </div>
-                    </div>
-                    <div>
-                      <Label htmlFor="fiscalYear">Exercício fiscal</Label>
-                      <Input
-                        id="fiscalYear"
-                        type="number"
-                        value={fiscalYear}
-                        onChange={(e) => setFiscalYear(e.target.value)}
-                        className="mt-1"
-                      />
-                    </div>
-                  </div>
                 </div>
 
                 <div>
