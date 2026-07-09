@@ -19,24 +19,11 @@ export default function ClientLayout({ children, companyName: initialCompanyName
       }
 
       try {
-        const { data: { user } } = await supabase.auth.getUser();
-        if (user) {
-          const { data: profile } = await supabase
-            .from('profiles')
-            .select('company_id')
-            .eq('id', user.id)
-            .single();
-
-          if (profile?.company_id) {
-            const { data: company } = await supabase
-              .from('companies')
-              .select('name')
-              .eq('id', profile.company_id)
-              .single();
-
-            if (company?.name) {
-              setCompanyName(company.name);
-            }
+        const response = await fetch('/api/company');
+        if (response.ok) {
+          const { company } = await response.json();
+          if (company?.name) {
+            setCompanyName(company.name);
           }
         }
       } catch (error) {

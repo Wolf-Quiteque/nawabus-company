@@ -90,7 +90,7 @@ export default function TicketsPage() {
 
   const formatTripRoute = (trip) => {
     if (!trip?.route) return 'N/A';
-    return `${trip.route.origin} → ${trip.route.destination}`;
+    return `${trip.route.origin_city} → ${trip.route.destination_city}`;
   };
 
   const formatDateTime = (dateString) => {

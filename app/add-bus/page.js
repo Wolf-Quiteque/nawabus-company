@@ -5,7 +5,6 @@ import ClientLayout from '@/components/ClientLayout';
 import { Button } from '@/components/ui/button';
 import { Loader2 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import {
   Dialog,
   DialogContent,
@@ -95,28 +94,6 @@ export default function BusPage() {
               </Dialog>
             </div>
           </CardHeader>
-            < Curet>
-             <Card> 
-                    <div className="grid gap-4 py-4">  
-                      <div className="flex items-center space-x-4">
-                        <Label htmlFor="search" className="sr-only">
-                          Procurar autocarros
-                        </Label>
-                        <Input
-                          id="search"
-                          placeholder="Procurar autocarros..."
-                          value={searchTerm}
-                          onChange={(e) => setSearchTerm(e.target.value)}
-                          className="max-w-sm"
-                        />
-                      </div>  
-                    </div>
-              
-              <dialog>
-                this is new ca
-              </dialog>
-             </Card>
-            </Curet>
           <CardContent>
             {loading ? (
               <div className="flex justify-center items-center p-8">

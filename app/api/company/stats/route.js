@@ -58,7 +58,7 @@ export async function GET() {
     // Get total tickets sold (paid tickets) for this company
     const { data: ticketsData, error: ticketsError } = await supabase
       .from('tickets')
-      .select('id, price_paid_usd, created_at')
+      .select('id, passenger_id, price_paid_usd, status, created_at')
       .eq('payment_status', 'paid')
       .in('trip_id', tripIds);
 
@@ -72,13 +72,10 @@ export async function GET() {
 
     if (tripsError) throw tripsError;
 
-    // Get total passengers (users with role 'passenger') - this might not be company-specific
-    const { data: passengersData, error: passengersError } = await supabase
-      .from('profiles')
-      .select('id, created_at')
-      .eq('role', 'passenger');
-
-    if (passengersError) throw passengersError;
+    // Unique passengers who bought a paid ticket on one of this company's trips.
+    // (profiles isn't company-scoped, so counting all passenger accounts would
+    // leak the platform-wide user count to every company.)
+    const totalPassengers = new Set(ticketsData.map(ticket => ticket.passenger_id).filter(Boolean)).size;
 
     // Get total revenue
     const totalRevenue = ticketsData.reduce((sum, ticket) => sum + (ticket.price_paid_usd || 0), 0);
@@ -115,7 +112,7 @@ export async function GET() {
     const stats = {
       totalTickets: ticketsData.length,
       totalTrips: tripsData.length,
-      totalPassengers: passengersData.length,
+      totalPassengers,
       totalRevenue: totalRevenue,
       monthlyTickets: Object.entries(monthlyTickets).map(([month, count]) => ({
         month,

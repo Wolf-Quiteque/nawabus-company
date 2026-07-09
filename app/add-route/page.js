@@ -104,10 +104,10 @@ export default function RoutePage() {
 
   const filteredRoutes = routes.filter(
     (route) =>
-      route.origin_city.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      route.origin_province.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      route.destination_city.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      route.destination_province.toLowerCase().includes(searchTerm.toLowerCase())
+      (route.origin_city || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (route.origin_province || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (route.destination_city || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (route.destination_province || '').toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   return (

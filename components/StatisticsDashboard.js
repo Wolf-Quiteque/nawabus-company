@@ -83,12 +83,12 @@ export default function StatisticsDashboard() {
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Passageiros Registrados</CardTitle>
+            <CardTitle className="text-sm font-medium">Passageiros Únicos</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{stats.totalPassengers}</div>
             <p className="text-xs text-muted-foreground">
-              Contas de usuário com papel de passageiro
+              Passageiros com bilhetes pagos nesta empresa
             </p>
           </CardContent>
         </Card>

@@ -154,7 +154,7 @@ export default function EmployeesPage() {
                             <span>{employee.first_name} {employee.last_name}</span>
                           </div>
                         </TableCell>
-                        <TableCell>{employee.phone}</TableCell>
+                        <TableCell>{employee.phone_number}</TableCell>
                         <TableCell>{getRoleBadge(employee.role)}</TableCell>
                         <TableCell>{formatDate(employee.created_at)}</TableCell>
                       </TableRow>

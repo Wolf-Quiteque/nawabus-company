@@ -1,4 +1,5 @@
 import { createServerClient } from '@supabase/ssr';
+import { createClient } from '@supabase/supabase-js';
 import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 
@@ -33,6 +34,10 @@ async function getSupabaseAndCompanyId() {
     return { error: 'Company access required', status: 403 };
   }
 
+  if (profile.role !== 'admin') {
+    return { error: 'Only company admins can add employees', status: 403 };
+  }
+
   return { supabase, companyId: profile.company_id };
 }
 
@@ -43,7 +48,7 @@ export async function POST(request) {
       return NextResponse.json({ error: authResult.error }, { status: authResult.status });
     }
 
-    const { supabase, companyId } = authResult;
+    const { companyId } = authResult;
 
     const body = await request.json();
     const { first_name, last_name, phone, role, password } = body;
@@ -56,33 +61,44 @@ export async function POST(request) {
       return NextResponse.json({ error: 'Invalid role' }, { status: 400 });
     }
 
-    // Create user in auth
-    const { data: authData, error: authError } = await supabase.auth.signUp({
-      phone: phone,
-      password: password,
+    // Employee accounts use the same email+password login convention as the rest
+    // of the platform (phone number is aliased to an @nawabus.com email).
+    const email = `${phone}@nawabus.com`;
+
+    // Service-role client: creates the auth user without touching the caller's
+    // own session (auth.signUp with the anon client would sign the caller out).
+    const adminSupabase = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL,
+      process.env.SUPABASE_SERVICE_ROLE_KEY
+    );
+
+    const { data: authData, error: authError } = await adminSupabase.auth.admin.createUser({
+      email,
+      password,
+      email_confirm: true,
+      user_metadata: { first_name, last_name, role, company_id: companyId },
     });
 
     if (authError) throw authError;
 
-    if (!authData.user) {
-      return NextResponse.json({ error: 'Failed to create user' }, { status: 500 });
-    }
-
     // Create profile
-    const { data: profile, error: profileError } = await supabase
+    const { data: profile, error: profileError } = await adminSupabase
       .from('profiles')
       .insert({
         id: authData.user.id,
         first_name,
         last_name,
-        phone,
+        phone_number: phone,
         role,
         company_id: companyId,
       })
       .select()
       .single();
 
-    if (profileError) throw profileError;
+    if (profileError) {
+      await adminSupabase.auth.admin.deleteUser(authData.user.id);
+      throw profileError;
+    }
 
     return NextResponse.json(profile, { status: 201 });
   } catch (error) {

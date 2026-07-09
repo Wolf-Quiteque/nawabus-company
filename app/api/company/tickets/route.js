@@ -88,7 +88,7 @@ export async function GET(request) {
           id,
           first_name,
           last_name,
-          phone
+          phone_number
         ),
         trip:trip_id(
           id,
@@ -96,8 +96,8 @@ export async function GET(request) {
           arrival_time,
           route:route_id(
             id,
-            origin,
-            destination
+            origin_city,
+            destination_city
           )
         )
       `)
