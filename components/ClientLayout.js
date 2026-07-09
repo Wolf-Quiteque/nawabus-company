@@ -8,11 +8,11 @@ export default function ClientLayout({ children, companyName: initialCompanyName
   const pathname = usePathname();
   const router = useRouter();
   const isLoginPage = pathname === '/login';
-  const [companyName, setCompanyName] = useState(initialCompanyName || 'Nawabus');
+  const [companyName, setCompanyName] = useState(initialCompanyName || '');
 
   useEffect(() => {
     const fetchCompanyName = async () => {
-      if (initialCompanyName && initialCompanyName !== 'Nawabus') {
+      if (initialCompanyName) {
         // If we already have a company name from server-side, use it
         setCompanyName(initialCompanyName);
         return;

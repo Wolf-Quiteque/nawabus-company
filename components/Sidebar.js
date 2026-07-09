@@ -12,7 +12,7 @@ const Sidebar = ({ companyName }) => {
     <div className="w-64 p-5 glass text-foreground flex flex-col h-screen">
       <div className="mb-10">
         <Link href="/">
-          <span className="text-2xl font-bold text-orange-500">{companyName || 'Nawabus'}</span>
+          <span className="text-2xl font-bold text-orange-500">{companyName}</span>
           <br />
           <span className="text-sm text-muted-foreground">Portal da Empresa</span>
         </Link>
