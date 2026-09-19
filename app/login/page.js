@@ -42,8 +42,9 @@ export default function LoginPage() {
         if (profileError) {
           setError(profileError.message);
           await supabase.auth.signOut(); // Log out if profile fetch fails
-        } else if (profile && profile.company_id) {
-          // User has company_id - valid company employee
+        } else if (profile && profile.company_id && profile.role === 'admin') {
+          // Company admins only: agents and drivers belong to a company too,
+          // but must not be able to change its trips, buses and routes.
           // Sync Supabase session cookies on the server before redirecting.
           const { data: { session } } = await supabase.auth.getSession();
           try {
@@ -57,7 +58,7 @@ export default function LoginPage() {
           // Redirect to dashboard
           router.replace('/');
         } else {
-          setError("Access Denied: Only company employees can access this portal.");
+          setError("Acesso reservado a administradores da empresa.");
           await supabase.auth.signOut();
         }
       }

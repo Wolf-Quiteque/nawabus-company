@@ -57,8 +57,11 @@ export async function POST(request) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
     }
 
-    if (!['admin', 'agent', 'driver'].includes(role)) {
-      return NextResponse.json({ error: 'Invalid role' }, { status: 400 });
+    // The admin role is global across every company on the platform, so a
+    // company must not be able to mint one here. Admins are created in
+    // admin-app by the platform's own administrators.
+    if (!['agent', 'driver'].includes(role)) {
+      return NextResponse.json({ error: 'Cargo inválido: use Agente ou Motorista.' }, { status: 400 });
     }
 
     // Employee accounts use the same email+password login convention as the rest
@@ -81,10 +84,12 @@ export async function POST(request) {
 
     if (authError) throw authError;
 
-    // Create profile
+    // The signup trigger has already created a passenger profile for this
+    // account, so this must be an upsert: a plain insert collided with it and
+    // every employee creation failed (the new account was then deleted).
     const { data: profile, error: profileError } = await adminSupabase
       .from('profiles')
-      .insert({
+      .upsert({
         id: authData.user.id,
         first_name,
         last_name,
