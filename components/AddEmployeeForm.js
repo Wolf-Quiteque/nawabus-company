@@ -129,7 +129,6 @@ export default function AddEmployeeForm({ onEmployeeAdded }) {
             <SelectContent>
               <SelectItem value="agent">Agente</SelectItem>
               <SelectItem value="driver">Motorista</SelectItem>
-              <SelectItem value="admin">Administrador</SelectItem>
             </SelectContent>
           </Select>
         </div>

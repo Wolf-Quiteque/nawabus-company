@@ -33,6 +33,12 @@ async function getSupabaseAndCompanyId() {
     return { error: 'Company access required', status: 403 };
   }
 
+  // Agents and drivers carry a company_id too; only the company's admins may
+  // read or change its data here.
+  if (profile.role !== 'admin') {
+    return { error: 'Acesso reservado a administradores da empresa.', status: 403 };
+  }
+
   return { supabase, companyId: profile.company_id };
 }
 
